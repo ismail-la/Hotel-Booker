@@ -1,0 +1,69 @@
+npm run dev:full
+
+> hotel-booking-app@0.1.0 dev:full
+> concurrently "npm run dev" "npm run server"
+
+[0] 
+[0] > hotel-booking-app@0.1.0 dev
+[0] > vite
+[0]
+[1]
+[1] > hotel-booking-app@0.1.0 server
+[1] > tsx server/server.js
+[1]
+[0] C:\Users\lahba\Desktop\Projects\HotelBooker\node_modules\rollup\dist\native.js:64
+[0]             throw new Error(
+[0]                   ^
+[0]
+[0] Error: Cannot find module @rollup/rollup-win32-x64-msvc. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+[0]     at requireWithFriendlyError (C:\Users\lahba\Desktop\Projects\HotelBooker\node_modules\rollup\dist\native.js:64:9)
+[0]     at Object.<anonymous> (C:\Users\lahba\Desktop\Projects\HotelBooker\node_modules\rollup\dist\native.js:73:76)
+[0]     ... 3 lines matching cause stack trace ...
+[0]     at Module._load (node:internal/modules/cjs/loader:1096:12)
+[0]     at cjsLoader (node:internal/modules/esm/translators:298:15)
+[0]     at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+[0]     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+[0]     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24) {
+[0]   [cause]: Error: Cannot find module '@rollup/rollup-win32-x64-msvc'
+[0]   Require stack:
+[0]   - C:\Users\lahba\Desktop\Projects\HotelBooker\node_modules\rollup\dist\native.js
+[0]       at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+[0]       at Module._load (node:internal/modules/cjs/loader:1043:27)
+[0]       at Module.require (node:internal/modules/cjs/loader:1298:19)
+[0]       at require (node:internal/modules/helpers:182:18)
+[0]       at requireWithFriendlyError (C:\Users\lahba\Desktop\Projects\HotelBooker\node_modules\rollup\dist\native.js:46:10)
+[0]       at Object.<anonymous> (C:\Users\lahba\Desktop\Projects\HotelBooker\node_modules\rollup\dist\native.js:73:76)
+[0]       at Module._compile (node:internal/modules/cjs/loader:1529:14)
+[0]       at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+[0]       at Module.load (node:internal/modules/cjs/loader:1275:32)
+[0]       at Module._load (node:internal/modules/cjs/loader:1096:12) {
+[0]     code: 'MODULE_NOT_FOUND',
+[0]     requireStack: [
+[0]       'C:\\Users\\lahba\\Desktop\\Projects\\HotelBooker\\node_modules\\rollup\\dist\\native.js'
+[0]     ]
+[0]   }
+[0] }
+[0]
+[0] Node.js v20.19.2
+[0] npm run dev exited with code 1
+[1] 
+[1] node:internal/modules/run_main:123
+[1]     triggerUncaughtException(
+[1]     ^
+[1] Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\lahba\Desktop\Projects\HotelBooker\server\server.js' imported from C:\Users\lahba\Desktop\Projects\HotelBooker\
+[1]     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
+[1]     at moduleResolve (node:internal/modules/esm/resolve:952:10)
+[1]     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+[1]     at nextResolve (node:internal/modules/esm/hooks:864:28)
+[1]     at resolveBase (file:///C:/Users/lahba/Desktop/Projects/HotelBooker/node_modules/tsx/dist/esm/index.mjs?1747373573005:2:3212)
+[1]     at resolveDirectory (file:///C:/Users/lahba/Desktop/Projects/HotelBooker/node_modules/tsx/dist/esm/index.mjs?1747373573005:2:3584)
+[1]     at resolveTsPaths (file:///C:/Users/lahba/Desktop/Projects/HotelBooker/node_modules/tsx/dist/esm/index.mjs?1747373573005:2:4073)
+[1]     at resolve (file:///C:/Users/lahba/Desktop/Projects/HotelBooker/node_modules/tsx/dist/esm/index.mjs?1747373573005:2:4447)
+[1]     at nextResolve (node:internal/modules/esm/hooks:864:28)
+[1]     at Hooks.resolve (node:internal/modules/esm/hooks:306:30) {
+[1]   code: 'ERR_MODULE_NOT_FOUND',
+[1]   url: 'file:///C:/Users/lahba/Desktop/Projects/HotelBooker/server/server.js'
+[1] }
+[1]
+[1] Node.js v20.19.2
+[1] npm run server exited with code 1

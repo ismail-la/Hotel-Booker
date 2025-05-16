@@ -30,7 +30,7 @@ app.use(express.json());
 
 // Configure session
 const sessionSettings = {
-  secret: "your-secret-key",
+  secret: "R3xv7hN4WTaLJ9Up5H4kblY6GqR8mZsYbq1XMI6Xq0=",
   resave: false,
   saveUninitialized: false,
   store: new MemoryStore({

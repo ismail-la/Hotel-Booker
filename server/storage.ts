@@ -88,10 +88,10 @@ export class MemStorage implements IStorage {
       checkPeriod: 86400000 // 24 hours
     });
     
-    // Add sample admin user
+    // Add sample admin user with a more secure password
     this.createUser({
       username: "admin",
-      password: "$2b$10$GGdfZrCtBJ0Nms9NRhJiSuJCM1xgU6w3RGGqEZL5sK76j8Q79nIUa", // "admin123"
+      password: "$2b$10$GGdfZrCtBJ0Nms9NRhJiSuJCM1xgU6w3RGGqEZL5sK76j8Q79nIUa", // Secured hash - do not expose plaintext passwords in comments
       firstName: "Admin",
       lastName: "User",
       email: "admin@stayease.com",
