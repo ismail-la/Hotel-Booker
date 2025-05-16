@@ -1,0 +1,44 @@
+Create a full-stack simple hotel booking web application using the MERN stack:
+1. Architecture & Tech Stack:
+   - Backend: Node.js, Express, MongoDB (with Mongoose ODM)
+   - Frontend: React with Tailwind CSS, React Router for navigation
+   - State Management: Redux or Context API for user state and booking flow
+   - Authentication: JWT-based signup and login
+   - Deployment: Ready for deployment on Heroku (backend) and Vercel (frontend)
+
+2. Pages & Components:
+   a. Home / Hotel Listing:
+      - Display a searchable, paginated list of hotels (max 5 hotels)
+      - Each hotel card shows image, name, location, price per night
+      - Filters by date range, location, price range
+   b. Hotel Detail:
+      - Show photo gallery, description, amenities
+      - Display available rooms with date-picker availability checks
+   c. Booking Flow:
+      - Multi-step form to select room, dates, guest info
+      - Real-time price calculation
+      - “Confirm Booking” button triggering a reservation API call
+   d. User Dashboard:
+      - List of past and upcoming bookings
+      - Ability to cancel or view details of each booking
+   e. Admin Dashboard:
+      - CRUD management for hotels, rooms, and reservations
+      - Simple data table views with add/edit/delete modals
+
+3. API Endpoints (Express):
+   - `GET /api/hotels`, `GET /api/hotels/:id`
+   - `POST /api/auth/signup`, `POST /api/auth/login`
+   - `POST /api/bookings`, `GET /api/users/:id/bookings`
+   - Protected routes for admin to manage hotels and rooms
+
+4. UI Details:
+   - Clean, modern layout with responsive design
+   - Use Tailwind utility classes for spacing and typography
+   - Consistent header with logo and navigation links
+   - Mobile-first approach with hamburger menu
+
+5. Next Steps:
+   - Scaffold the project structure (`client/` and `server/` folders)
+   - Install dependencies (`npm install` in both)
+   - Generate boilerplate code for each page and API route
+   - Run dev servers (`npm run dev` for backend, `npm start` for frontend)
