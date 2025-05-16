@@ -11,6 +11,10 @@ import AdminDashboardPage from "@/pages/admin-dashboard-page";
 import AuthPage from "@/pages/auth-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import Layout from "./components/layout/Layout";
+import { AuthProvider } from "@/hooks/use-auth";
+import { BookingProvider } from "@/context/BookingContext";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 function Router() {
   return (
@@ -29,12 +33,18 @@ function Router() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <Toaster />
-      <Layout>
-        <Router />
-      </Layout>
-    </TooltipProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BookingProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Layout>
+              <Router />
+            </Layout>
+          </TooltipProvider>
+        </BookingProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
