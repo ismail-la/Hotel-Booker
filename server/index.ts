@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import './mongodb'; // Import MongoDB connection
+import { connectToMongoDB } from "./mongodb-connection"; // Import MongoDB connection
 
 const app = express();
 app.use(express.json());
@@ -38,6 +38,16 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Try to connect to MongoDB first
+  try {
+    const connected = await connectToMongoDB();
+    if (!connected) {
+      console.warn('MongoDB connection failed. Some features may not work properly.');
+    }
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+  }
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

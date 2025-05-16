@@ -1,40 +1,43 @@
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
+import { createModels } from '@shared/mongoose-models';
 
-// Create a MongoDB connection URL with proper formatting
-let MONGODB_URL = 'mongodb://localhost:27017/hotel_booking_app';
+let mongoServer: MongoMemoryServer | null = null;
 
-// Check if provided URI starts with the required MongoDB protocol
-if (process.env.MONGODB_URI) {
-  if (process.env.MONGODB_URI.startsWith('mongodb://') || process.env.MONGODB_URI.startsWith('mongodb+srv://')) {
-    MONGODB_URL = process.env.MONGODB_URI;
-  } else {
-    // Try to add the protocol if missing
-    MONGODB_URL = `mongodb://${process.env.MONGODB_URI}`;
-    console.log('Added mongodb:// prefix to MONGODB_URI');
+/**
+ * Starts an in-memory MongoDB server for development/testing
+ */
+export async function startInMemoryMongoDB(): Promise<string> {
+  console.log('Starting in-memory MongoDB server...');
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+  console.log(`MongoDB Memory Server running at ${uri}`);
+  
+  // Set environment variable for other parts of the application to use
+  process.env.MONGODB_URI = uri;
+  
+  // Connect to the in-memory database
+  await mongoose.connect(uri);
+  console.log('Connected to in-memory MongoDB');
+  
+  // Initialize models
+  createModels();
+  
+  return uri;
+}
+
+/**
+ * Stops the in-memory MongoDB server
+ */
+export async function stopInMemoryMongoDB(): Promise<void> {
+  if (mongoServer) {
+    await mongoose.connection.close();
+    await mongoServer.stop();
+    console.log('In-memory MongoDB server stopped');
   }
 }
 
-console.log('Attempting to connect to MongoDB at:', MONGODB_URL);
-
-// Use a try-catch block for better error handling
-try {
-  // Connect to MongoDB
-  mongoose.connect(MONGODB_URL);
-  
-  const db = mongoose.connection;
-  
-  db.on('error', (error) => {
-    console.error('MongoDB connection error:', error);
-  });
-  
-  db.once('open', () => {
-    console.log('Connected to MongoDB successfully');
-  });
-} catch (error) {
-  console.error('Failed to connect to MongoDB:', error);
-  
-  // Fallback to in-memory storage if MongoDB connection fails
-  console.log('Using in-memory storage instead');
-}
-
-export default mongoose;
+// Start the in-memory MongoDB when this module is imported
+startInMemoryMongoDB()
+  .then(() => console.log('In-memory MongoDB setup complete'))
+  .catch(err => console.error('Failed to start in-memory MongoDB:', err));

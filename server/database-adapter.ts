@@ -1,37 +1,28 @@
-import { storage as postgresStorage } from './storage';
-import { mongoStorage } from './mongo-storage';
-import { connectToMongoDB } from './mongodb-connector';
-
 /**
- * This adapter lets you choose which database implementation to use.
- * You can switch between PostgreSQL and MongoDB without changing application code.
+ * Database Adapter
+ * This provides a unified interface to switch between PostgreSQL and MongoDB
  */
 
-// Whether to use MongoDB (true) or PostgreSQL (false)
-const USE_MONGODB = process.env.USE_MONGODB === 'true';
+import { USE_MONGODB } from './db-config';
+import { storage as postgresStorage } from './storage';
+import { mongoStorage } from './mongo-storage';
+import { connectToMongoDB } from './mongodb-connection';
 
-// Try to connect to MongoDB if enabled
+// Dynamically select the appropriate storage implementation
+export const storage = USE_MONGODB ? mongoStorage : postgresStorage;
+
+// Initialize the database connection
 async function initialize() {
   if (USE_MONGODB) {
-    try {
-      const connected = await connectToMongoDB();
-      console.log(`Using MongoDB for database storage: ${connected ? 'Connected successfully' : 'Connection failed, falling back to PostgreSQL'}`);
-      
-      if (!connected) {
-        console.log('MongoDB connection failed, falling back to PostgreSQL');
-        return postgresStorage;
-      }
-      
-      return mongoStorage;
-    } catch (error) {
-      console.error('Error connecting to MongoDB:', error);
-      console.log('Falling back to PostgreSQL');
-      return postgresStorage;
+    // Connect to MongoDB
+    const connected = await connectToMongoDB();
+    if (!connected) {
+      console.error('Warning: Failed to connect to MongoDB. Some features may not work properly.');
     }
   }
   
-  console.log('Using PostgreSQL for database storage');
-  return postgresStorage;
+  // Add any database initialization code here
+  return true;
 }
 
 export { initialize };
