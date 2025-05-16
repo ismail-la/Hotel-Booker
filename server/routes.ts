@@ -1,9 +1,9 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "./mongo-storage"; // Update to use MongoDB storage
 import { setupAuth } from "./auth";
 import { z } from "zod";
-import { insertBookingSchema, insertHotelSchema, insertRoomSchema } from "@shared/schema";
+import { insertBookingSchema, insertHotelSchema, insertRoomSchema } from "@shared/models"; // Update to use MongoDB models
 
 // Middleware to check authentication
 const isAuthenticated = (req: Request, res: Response, next: Function) => {
@@ -37,7 +37,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/hotels/:id", async (req, res) => {
     try {
-      const hotelId = parseInt(req.params.id);
+      // Get hotelId - support both number and string IDs for both DB types
+      const hotelId = req.params.id;
       const hotel = await storage.getHotel(hotelId);
       
       if (!hotel) {
@@ -53,7 +54,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // For each room, get its amenities
       const roomsWithAmenities = await Promise.all(
         rooms.map(async (room) => {
-          const amenities = await storage.getRoomAmenities(room.id);
+          const roomId = room.id?.toString() || room._id?.toString();
+          const amenities = await storage.getRoomAmenities(roomId);
           return { ...room, amenities };
         })
       );
@@ -64,6 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rooms: roomsWithAmenities
       });
     } catch (error) {
+      console.error("Error fetching hotel details:", error);
       res.status(500).json({ message: "Error fetching hotel details" });
     }
   });
