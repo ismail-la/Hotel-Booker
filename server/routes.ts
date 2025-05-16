@@ -1,13 +1,11 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage"; // Use PostgreSQL storage until MongoDB is fully connected
-import { mongoStorage } from "./mongo-storage"; // Import MongoDB storage for future use
+import { storage } from "./database-adapter"; // Import the database adapter
 import { setupAuth } from "./auth";
 import { z } from "zod";
 import { insertBookingSchema, insertHotelSchema, insertRoomSchema } from "@shared/schema";
 
-// Determine which storage implementation to use
-// Will use PostgreSQL by default until MongoDB is properly set up
+// Use the database adapter which will select the right storage implementation
 const db = storage;
 
 // Middleware to check authentication
