@@ -1,61 +1,60 @@
-import {
-  User, IUser,
-  Hotel, IHotel,
-  Room, IRoom,
-  Booking, IBooking,
-  HotelAmenity, IHotelAmenity,
-  RoomAmenity, IRoomAmenity,
-  InsertUser,
-  InsertHotel,
-  InsertRoom,
-  InsertBooking,
-  InsertHotelAmenity,
-  InsertRoomAmenity
-} from "@shared/models";
-import session from "express-session";
-import createMemoryStore from "memorystore";
+import { createModels } from '../shared/mongoose-models';
+import mongoose from 'mongoose';
+import session from 'express-session';
+import createMemoryStore from 'memorystore';
+import { 
+  insertUserSchema, 
+  insertHotelSchema, 
+  insertRoomSchema, 
+  insertBookingSchema, 
+  insertHotelAmenitySchema, 
+  insertRoomAmenitySchema 
+} from '../shared/schema';
+
+// Create the MongoDB models
+const Models = createModels();
 
 // Interface for storage methods
-export interface IStorage {
+export interface IMongoStorage {
   // User methods
-  getUser(id: string): Promise<IUser | null>;
-  getUserByUsername(username: string): Promise<IUser | null>;
-  createUser(user: InsertUser): Promise<IUser>;
+  getUser(id: string): Promise<any | null>;
+  getUserByUsername(username: string): Promise<any | null>;
+  createUser(user: any): Promise<any>;
   
   // Hotel methods
-  getAllHotels(): Promise<IHotel[]>;
-  getHotel(id: string): Promise<IHotel | null>;
-  createHotel(hotel: InsertHotel): Promise<IHotel>;
-  updateHotel(id: string, hotel: Partial<InsertHotel>): Promise<IHotel | null>;
+  getAllHotels(): Promise<any[]>;
+  getHotel(id: string): Promise<any | null>;
+  createHotel(hotel: any): Promise<any>;
+  updateHotel(id: string, hotel: Partial<any>): Promise<any | null>;
   deleteHotel(id: string): Promise<boolean>;
   
   // Hotel Amenity methods
-  getHotelAmenities(hotelId: string): Promise<IHotelAmenity[]>;
-  createHotelAmenity(amenity: InsertHotelAmenity): Promise<IHotelAmenity>;
+  getHotelAmenities(hotelId: string): Promise<any[]>;
+  createHotelAmenity(amenity: any): Promise<any>;
   
   // Room methods
-  getRoomsForHotel(hotelId: string): Promise<IRoom[]>;
-  getRoom(id: string): Promise<IRoom | null>;
-  createRoom(room: InsertRoom): Promise<IRoom>;
-  updateRoom(id: string, room: Partial<InsertRoom>): Promise<IRoom | null>;
+  getRoomsForHotel(hotelId: string): Promise<any[]>;
+  getRoom(id: string): Promise<any | null>;
+  createRoom(room: any): Promise<any>;
+  updateRoom(id: string, room: Partial<any>): Promise<any | null>;
   deleteRoom(id: string): Promise<boolean>;
   
   // Room Amenity methods
-  getRoomAmenities(roomId: string): Promise<IRoomAmenity[]>;
-  createRoomAmenity(amenity: InsertRoomAmenity): Promise<IRoomAmenity>;
+  getRoomAmenities(roomId: string): Promise<any[]>;
+  createRoomAmenity(amenity: any): Promise<any>;
   
   // Booking methods
-  getBooking(id: string): Promise<IBooking | null>;
-  getUserBookings(userId: string): Promise<IBooking[]>;
-  createBooking(booking: InsertBooking): Promise<IBooking>;
-  updateBookingStatus(id: string, status: string): Promise<IBooking | null>;
+  getBooking(id: string): Promise<any | null>;
+  getUserBookings(userId: string): Promise<any[]>;
+  createBooking(booking: any): Promise<any>;
+  updateBookingStatus(id: string, status: string): Promise<any | null>;
   
   // Session store
   sessionStore: session.Store;
 }
 
 // MongoDB storage implementation
-export class MongoStorage implements IStorage {
+export class MongoStorage implements IMongoStorage {
   sessionStore: session.Store;
 
   constructor() {
@@ -65,213 +64,167 @@ export class MongoStorage implements IStorage {
     });
   }
 
+  // Helper function to handle MongoDB connection errors
+  private async handleDBOperation<T>(operation: () => Promise<T>, errorMessage: string): Promise<T | null> {
+    try {
+      return await operation();
+    } catch (error) {
+      console.error(`MongoDB Error - ${errorMessage}:`, error);
+      return null;
+    }
+  }
+
   // User methods
-  async getUser(id: string): Promise<IUser | null> {
-    try {
-      return await User.findById(id);
-    } catch (error) {
-      console.error("Error getting user:", error);
-      return null;
-    }
+  async getUser(id: string): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.User.findById(id);
+    }, "Error getting user");
   }
 
-  async getUserByUsername(username: string): Promise<IUser | null> {
-    try {
-      return await User.findOne({ username });
-    } catch (error) {
-      console.error("Error getting user by username:", error);
-      return null;
-    }
+  async getUserByUsername(username: string): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.User.findOne({ username });
+    }, "Error getting user by username");
   }
 
-  async createUser(userData: InsertUser): Promise<IUser> {
-    try {
-      const user = new User(userData);
-      return await user.save();
-    } catch (error) {
-      console.error("Error creating user:", error);
-      throw error;
-    }
+  async createUser(userData: any): Promise<any> {
+    return this.handleDBOperation(async () => {
+      const user = new Models.User(userData);
+      await user.save();
+      return user;
+    }, "Error creating user");
   }
 
   // Hotel methods
-  async getAllHotels(): Promise<IHotel[]> {
-    try {
-      return await Hotel.find();
-    } catch (error) {
-      console.error("Error getting all hotels:", error);
-      return [];
-    }
+  async getAllHotels(): Promise<any[]> {
+    return this.handleDBOperation(async () => {
+      return await Models.Hotel.find();
+    }, "Error getting all hotels") || [];
   }
 
-  async getHotel(id: string): Promise<IHotel | null> {
-    try {
-      return await Hotel.findById(id);
-    } catch (error) {
-      console.error("Error getting hotel:", error);
-      return null;
-    }
+  async getHotel(id: string): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.Hotel.findById(id);
+    }, "Error getting hotel");
   }
 
-  async createHotel(hotelData: InsertHotel): Promise<IHotel> {
-    try {
-      const hotel = new Hotel(hotelData);
-      return await hotel.save();
-    } catch (error) {
-      console.error("Error creating hotel:", error);
-      throw error;
-    }
+  async createHotel(hotelData: any): Promise<any> {
+    return this.handleDBOperation(async () => {
+      const hotel = new Models.Hotel(hotelData);
+      await hotel.save();
+      return hotel;
+    }, "Error creating hotel");
   }
 
-  async updateHotel(id: string, hotelData: Partial<InsertHotel>): Promise<IHotel | null> {
-    try {
-      return await Hotel.findByIdAndUpdate(id, hotelData, { new: true });
-    } catch (error) {
-      console.error("Error updating hotel:", error);
-      return null;
-    }
+  async updateHotel(id: string, hotelData: Partial<any>): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.Hotel.findByIdAndUpdate(id, hotelData, { new: true });
+    }, "Error updating hotel");
   }
 
   async deleteHotel(id: string): Promise<boolean> {
-    try {
-      const result = await Hotel.findByIdAndDelete(id);
+    return this.handleDBOperation(async () => {
+      const result = await Models.Hotel.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
-      console.error("Error deleting hotel:", error);
-      return false;
-    }
+    }, "Error deleting hotel") || false;
   }
 
   // Hotel Amenity methods
-  async getHotelAmenities(hotelId: string): Promise<IHotelAmenity[]> {
-    try {
-      return await HotelAmenity.find({ hotelId });
-    } catch (error) {
-      console.error("Error getting hotel amenities:", error);
-      return [];
-    }
+  async getHotelAmenities(hotelId: string): Promise<any[]> {
+    return this.handleDBOperation(async () => {
+      return await Models.HotelAmenity.find({ hotelId });
+    }, "Error getting hotel amenities") || [];
   }
 
-  async createHotelAmenity(amenityData: InsertHotelAmenity): Promise<IHotelAmenity> {
-    try {
-      const amenity = new HotelAmenity(amenityData);
-      return await amenity.save();
-    } catch (error) {
-      console.error("Error creating hotel amenity:", error);
-      throw error;
-    }
+  async createHotelAmenity(amenityData: any): Promise<any> {
+    return this.handleDBOperation(async () => {
+      const amenity = new Models.HotelAmenity(amenityData);
+      await amenity.save();
+      return amenity;
+    }, "Error creating hotel amenity");
   }
 
   // Room methods
-  async getRoomsForHotel(hotelId: string): Promise<IRoom[]> {
-    try {
-      return await Room.find({ hotelId });
-    } catch (error) {
-      console.error("Error getting rooms for hotel:", error);
-      return [];
-    }
+  async getRoomsForHotel(hotelId: string): Promise<any[]> {
+    return this.handleDBOperation(async () => {
+      return await Models.Room.find({ hotelId });
+    }, "Error getting rooms for hotel") || [];
   }
 
-  async getRoom(id: string): Promise<IRoom | null> {
-    try {
-      return await Room.findById(id);
-    } catch (error) {
-      console.error("Error getting room:", error);
-      return null;
-    }
+  async getRoom(id: string): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.Room.findById(id);
+    }, "Error getting room");
   }
 
-  async createRoom(roomData: InsertRoom): Promise<IRoom> {
-    try {
-      const room = new Room(roomData);
-      return await room.save();
-    } catch (error) {
-      console.error("Error creating room:", error);
-      throw error;
-    }
+  async createRoom(roomData: any): Promise<any> {
+    return this.handleDBOperation(async () => {
+      const room = new Models.Room(roomData);
+      await room.save();
+      return room;
+    }, "Error creating room");
   }
 
-  async updateRoom(id: string, roomData: Partial<InsertRoom>): Promise<IRoom | null> {
-    try {
-      return await Room.findByIdAndUpdate(id, roomData, { new: true });
-    } catch (error) {
-      console.error("Error updating room:", error);
-      return null;
-    }
+  async updateRoom(id: string, roomData: Partial<any>): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.Room.findByIdAndUpdate(id, roomData, { new: true });
+    }, "Error updating room");
   }
 
   async deleteRoom(id: string): Promise<boolean> {
-    try {
-      const result = await Room.findByIdAndDelete(id);
+    return this.handleDBOperation(async () => {
+      const result = await Models.Room.findByIdAndDelete(id);
       return !!result;
-    } catch (error) {
-      console.error("Error deleting room:", error);
-      return false;
-    }
+    }, "Error deleting room") || false;
   }
 
   // Room Amenity methods
-  async getRoomAmenities(roomId: string): Promise<IRoomAmenity[]> {
-    try {
-      return await RoomAmenity.find({ roomId });
-    } catch (error) {
-      console.error("Error getting room amenities:", error);
-      return [];
-    }
+  async getRoomAmenities(roomId: string): Promise<any[]> {
+    return this.handleDBOperation(async () => {
+      return await Models.RoomAmenity.find({ roomId });
+    }, "Error getting room amenities") || [];
   }
 
-  async createRoomAmenity(amenityData: InsertRoomAmenity): Promise<IRoomAmenity> {
-    try {
-      const amenity = new RoomAmenity(amenityData);
-      return await amenity.save();
-    } catch (error) {
-      console.error("Error creating room amenity:", error);
-      throw error;
-    }
+  async createRoomAmenity(amenityData: any): Promise<any> {
+    return this.handleDBOperation(async () => {
+      const amenity = new Models.RoomAmenity(amenityData);
+      await amenity.save();
+      return amenity;
+    }, "Error creating room amenity");
   }
 
   // Booking methods
-  async getBooking(id: string): Promise<IBooking | null> {
-    try {
-      return await Booking.findById(id);
-    } catch (error) {
-      console.error("Error getting booking:", error);
-      return null;
-    }
+  async getBooking(id: string): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.Booking.findById(id);
+    }, "Error getting booking");
   }
 
-  async getUserBookings(userId: string): Promise<IBooking[]> {
-    try {
-      return await Booking.find({ userId });
-    } catch (error) {
-      console.error("Error getting user bookings:", error);
-      return [];
-    }
+  async getUserBookings(userId: string): Promise<any[]> {
+    return this.handleDBOperation(async () => {
+      return await Models.Booking.find({ userId });
+    }, "Error getting user bookings") || [];
   }
 
-  async createBooking(bookingData: InsertBooking): Promise<IBooking> {
-    try {
-      const booking = new Booking({
+  async createBooking(bookingData: any): Promise<any> {
+    return this.handleDBOperation(async () => {
+      const booking = new Models.Booking({
         ...bookingData,
+        // Ensure dates are converted properly
         checkInDate: new Date(bookingData.checkInDate),
         checkOutDate: new Date(bookingData.checkOutDate)
       });
-      return await booking.save();
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      throw error;
-    }
+      await booking.save();
+      return booking;
+    }, "Error creating booking");
   }
 
-  async updateBookingStatus(id: string, status: string): Promise<IBooking | null> {
-    try {
-      return await Booking.findByIdAndUpdate(id, { status }, { new: true });
-    } catch (error) {
-      console.error("Error updating booking status:", error);
-      return null;
-    }
+  async updateBookingStatus(id: string, status: string): Promise<any | null> {
+    return this.handleDBOperation(async () => {
+      return await Models.Booking.findByIdAndUpdate(id, { status }, { new: true });
+    }, "Error updating booking status");
   }
 }
 
 // Export a singleton instance
-export const storage = new MongoStorage();
+export const mongoStorage = new MongoStorage();

@@ -1,9 +1,9 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./mongo-storage"; // Update to use MongoDB storage
+import { storage } from "./storage"; // Use PostgreSQL storage by default
 import { setupAuth } from "./auth";
 import { z } from "zod";
-import { insertBookingSchema, insertHotelSchema, insertRoomSchema } from "@shared/models"; // Update to use MongoDB models
+import { insertBookingSchema, insertHotelSchema, insertRoomSchema } from "@shared/schema"; // Use existing schema
 
 // Middleware to check authentication
 const isAuthenticated = (req: Request, res: Response, next: Function) => {
