@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Hotel } from "@shared/schema";
 import { Eye, Pencil, Trash, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 
 interface AdminHotelTableProps {
   searchTerm: string;
@@ -41,7 +41,7 @@ export default function AdminHotelTable({
   statusFilter,
 }: AdminHotelTableProps) {
   const { toast } = useToast();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
@@ -206,7 +206,7 @@ export default function AdminHotelTable({
 
   // View hotel details
   const viewHotelDetails = (hotelId: number) => {
-    navigate(`/hotels/${hotelId}`);
+    setLocation(`/hotels/${hotelId}`);
   };
 
   return (

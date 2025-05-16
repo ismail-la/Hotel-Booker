@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -44,16 +44,16 @@ export default function AuthPage() {
   const params = new URLSearchParams(searchParams);
   const mode = params.get("mode") || "login";
   const [activeTab, setActiveTab] = useState<string>(mode);
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   
   const { user, loginMutation, registerMutation } = useAuth();
   
   // Redirect to home if already logged in
   useEffect(() => {
     if (user) {
-      navigate("/");
+      setLocation("/");
     }
-  }, [user, navigate]);
+  }, [user, setLocation]);
   
   // Setup login form
   const loginForm = useForm<LoginFormValues>({
@@ -91,7 +91,7 @@ export default function AuthPage() {
   // Update URL when tab changes
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    navigate(`/auth?mode=${value}`);
+    setLocation(`/auth?mode=${value}`);
   };
 
   return (

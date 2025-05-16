@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Users, Hotel, Ruler, Mountain } from "lucide-react";
 import { useBookingContext } from "@/context/BookingContext";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 
 interface RoomCardProps {
   room: Room;
@@ -13,7 +13,7 @@ interface RoomCardProps {
 
 export default function RoomCard({ room, hotelId, hotelName }: RoomCardProps) {
   const { setBookingData } = useBookingContext();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   
   // Calculate discounted price
   const discountedPrice = room.discountPercentage > 0
@@ -37,7 +37,7 @@ export default function RoomCard({ room, hotelId, hotelName }: RoomCardProps) {
       image: room.image || ""
     });
     
-    navigate("/booking");
+    setLocation("/booking");
   };
 
   return (

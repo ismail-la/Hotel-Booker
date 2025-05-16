@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,7 +13,7 @@ interface SearchFormProps {
 }
 
 export default function HotelSearchForm({ className }: SearchFormProps) {
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const [destination, setDestination] = useState("");
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
@@ -44,7 +44,7 @@ export default function HotelSearchForm({ className }: SearchFormProps) {
     params.append("guests", guestCount);
     
     // Navigate to hotels page with filters
-    navigate(`/hotels?${params.toString()}`);
+    setLocation(`/hotels?${params.toString()}`);
   };
 
   return (

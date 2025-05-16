@@ -1,11 +1,11 @@
-import { useParams, useNavigate } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Hotel, Room } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, MapPin, Star, Wifi, Utensils, Car, FileHeart, WavesLadder, Wine, Accessibility } from "lucide-react";
-import HotelIcon from "lucide-react/dist/icons/hotel";
+import { ArrowLeft, MapPin, Star, Wifi, Utensils, Car, FileHeart, Wine, Accessibility, LocateIcon } from "lucide-react";
+import { HotelIcon } from "lucide-react";
 import HotelGallery from "@/components/hotel/HotelGallery";
 import RoomCard from "@/components/hotel/RoomCard";
 
@@ -28,7 +28,7 @@ interface HotelDetailResponse extends Hotel {
 
 export default function HotelDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const hotelId = parseInt(id);
 
   // Fetch hotel details with rooms and amenities
@@ -58,11 +58,11 @@ export default function HotelDetailPage() {
       case "ri-parking-box-line":
         return <Car className="text-lg text-primary mr-2 h-5 w-5" />;
       case "ri-hotel-bed-line":
-        return <Hotel className="text-lg text-primary mr-2 h-5 w-5" />;
+        return <HotelIcon className="text-lg text-primary mr-2 h-5 w-5" />;
       case "ri-user-heart-line":
         return <FileHeart className="text-lg text-primary mr-2 h-5 w-5" />;
       case "ri-swimming-pool-line":
-        return <WavesLadder className="text-lg text-primary mr-2 h-5 w-5" />;
+        return <LocateIcon className="text-lg text-primary mr-2 h-5 w-5" />;
       case "ri-goblet-line":
         return <Wine className="text-lg text-primary mr-2 h-5 w-5" />;
       case "ri-wheelchair-line":
@@ -81,7 +81,7 @@ export default function HotelDetailPage() {
         <p className="text-neutral-600 mb-6">
           Sorry, we couldn't load the hotel details. Please try again later.
         </p>
-        <Button onClick={() => navigate("/hotels")}>
+        <Button onClick={() => setLocation("/hotels")}>
           Return to Hotel Listings
         </Button>
       </div>
@@ -94,7 +94,7 @@ export default function HotelDetailPage() {
         <Button
           variant="ghost"
           className="inline-flex items-center text-primary font-medium mb-4"
-          onClick={() => navigate("/hotels")}
+          onClick={() => setLocation("/hotels")}
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Search Results
         </Button>

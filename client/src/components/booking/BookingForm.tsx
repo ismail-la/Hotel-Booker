@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,7 @@ interface BookingFormProps {
 
 export default function BookingForm({ onContinue }: BookingFormProps) {
   const { bookingData, setBookingData } = useBookingContext();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   
   // Initialize state for form fields
@@ -43,7 +43,7 @@ export default function BookingForm({ onContinue }: BookingFormProps) {
 
   // Handle back button
   const handleBack = () => {
-    navigate(`/hotels/${bookingData.hotelId}`);
+    setLocation(`/hotels/${bookingData.hotelId}`);
   };
 
   // Handle continue button

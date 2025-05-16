@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBookingContext } from "@/context/BookingContext";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
@@ -43,7 +43,7 @@ export default function BookingPage() {
   const [paymentMethod, setPaymentMethod] = useState<string>("card");
   const { bookingData } = useBookingContext();
   const { user } = useAuth();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   // Set up form with default values
@@ -90,7 +90,7 @@ export default function BookingPage() {
             <p className="mb-6">Please select a room from a hotel before proceeding to booking.</p>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button onClick={() => navigate("/hotels")}>
+            <Button onClick={() => setLocation("/hotels")}>
               Browse Hotels
             </Button>
           </CardFooter>
@@ -463,11 +463,11 @@ export default function BookingPage() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button 
                     variant="outline" 
-                    onClick={() => navigate("/dashboard")}
+                    onClick={() => setLocation("/dashboard")}
                   >
                     View My Bookings
                   </Button>
-                  <Button onClick={() => navigate("/")}>
+                  <Button onClick={() => setLocation("/")}>
                     Return to Home
                   </Button>
                 </div>

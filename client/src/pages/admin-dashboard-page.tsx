@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import AdminHotelTable from "@/components/dashboard/AdminHotelTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ type HotelFormValues = z.infer<typeof hotelFormSchema>;
 
 export default function AdminDashboardPage() {
   const { user, logoutMutation } = useAuth();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [addHotelDialogOpen, setAddHotelDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("hotels");
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
 
   // Check if user is admin, redirect if not
   if (user && !user.isAdmin) {
-    navigate("/dashboard");
+    setLocation("/dashboard");
     return null;
   }
 
